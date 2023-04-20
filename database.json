@@ -1,0 +1,25 @@
+{
+  "patients": [
+    {
+      "date": "2023-04-21",
+      "name": "Aldi Azhari",
+      "age": "20",
+      "polies": "Poliklinik KULIT",
+      "id": 1
+    }
+  ],
+  "polies": [
+    {
+      "id": 1,
+      "name": "Poliklinik OBGYN"
+    },
+    {
+      "id": 2,
+      "name": "Poliklinik PENYAKIT DALAM"
+    },
+    {
+      "id": 3,
+      "name": "Poliklinik KULIT"
+    }
+  ]
+}

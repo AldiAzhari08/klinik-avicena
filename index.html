@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALDI AZHARI-MI21B</title>
+
+    <style>
+#table-patients {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#table-patients td, #table-patients th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#table-patients tr:nth-child(even){background-color: #f2f2f2;}
+
+#table-patients tr:hover {background-color: #ddd;}
+
+#table-patients th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: white;
+}
+
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+input[type=date], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=number], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+#button-simpan {
+  background-color: #350084;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+#button-edit {
+  background-color: #0081c2;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+#button-delete {
+  background-color: #a51010;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+header h1 {
+  font-size: 70px;
+  font-weight: 400;
+  background-image: linear-gradient(to bottom left, #553c9a, #ee4b2b);
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-align: center;
+}
+    </style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+</head>
+
+<body>
+    <div>
+        <header>
+            <h1>KLINIK AVICENA</h1>
+        </header>
+        <div>
+            <h2><b>Formulir Pendaftaran</b></h2>
+            <input id="date" type="date">
+            <input id="name" type="text" placeholder="Isi nama lengkap disini">
+            <input id="age" type="number" placeholder="Isi umur disini">
+            <select id="polies">
+                <option>Pilih</option>
+            </select>
+            <button id="button-simpan" onclick="saveData()">Simpan</button>
+
+        </div>
+        <h2><b>Berikut adalah daftar pasien :</b></h2>
+        <table id="table-patients">
+            <thead>
+                <th>No</th>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Ages</th>
+                <th>Polies</th>
+                <th colspan="2" style="text-align: center">Action</th>
+            </thead>
+
+            <tbody id="result"></tbody>
+        </table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+
+        //EDIT
+        const editData = (id, date, name, age, polies) => {
+            document.getElementById("date").value = date;
+            document.getElementById("name").value = name;
+            document.getElementById("age").value = age;
+            document.getElementById("polies").value = polies;
+            document.getElementById("button").innerText = "Ubah";
+            document
+                .getElementById("button")
+                .setAttribute("onclick", `updateData(${id})`);
+        };
+
+        const updateData = async (id) => {
+            let dateFrom = document.getElementById("date").value;
+            let nameForm = document.getElementById("name").value;
+            let ageForm = document.getElementById("age").value;
+            let poliesForm = document.getElementById("polies").value;
+            let text = `Betul data ${nameForm} akan diubah?`;
+            if (confirm(text) == true) {
+                await axios
+                    .patch(`http://localhost:3000/patients/${id}`, {
+                        date: dateFrom,
+                        name: nameForm,
+                        age: ageForm,
+                        polies: poliesForm,
+                    })
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error.message);
+                    });
+            }
+        };
+
+
+
+        //SAVE/SIMPAN DATA
+        const saveData = async () => {
+            let dateFrom = document.getElementById('date').value;
+            let nameForm = document.getElementById('name').value;
+            let ageForm = document.getElementById('age').value;
+            let poliesForm = document.getElementById('polies').value;
+            await axios.post(`http://localhost:3000/patients`, {
+                date: dateFrom,
+                name: nameForm,
+                age: ageForm,
+                polies: poliesForm
+            })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.log(error.message)
+                });
+        }
+
+        // DELETE
+        const deleteData = async (id) => {
+        let text = `Apakah data ${id} akan dihapus?`;
+        if (confirm(text) == true) {
+            await axios
+            .delete(`http://localhost:3000/patients/${id}`)
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log(error.message);
+            });
+        } else {
+            console.log("Data tidak dihapus");
+        }
+        };
+
+
+        // MENGAMPILKAN DATA DARI DATABASE
+        const getData = async () => {
+            await axios.get(`http://localhost:3000/patients`)
+                .then((response) => {
+                    let bucket = ``;
+                    let patients = response.data;
+                    console.log(patients)
+                    if (patients.length > 0) {
+                        for (let i = 0; i < patients.length; i++) {
+                            bucket += `
+                            <tr>
+                            <td>${i + 1}</td>
+                            <td>${patients[i].date}</td>
+                            <td>${patients[i].name}</td>
+                            <td>${patients[i].age}</td>
+                            <td>${patients[i].polies}</td>
+                            <td>
+                                
+                                <button id="button-edit" onclick="editData('${patients[i].id}', '${patients[i].date}','${patients[i].name}','${patients[i].age}','${patients[i].polies}')">Edit</button>
+                                </td>
+                            <td>
+                                <button id="button-delete" onclick="deleteData(${patients[i].id})">Delete</button>
+                                </td>
+                            </tr>
+                            `
+                        }
+                    } else {
+                        bucket += `
+                            <tr>
+                            <td colspan="7" style="text-align: center">Data tidak ditemukan</td>
+                            </tr>   
+                        `
+                    }
+                    document.getElementById('result').innerHTML = bucket;
+                })
+                .catch((error) => {
+                    let bucket = `
+                <tr>
+                <td colspan="5" style="text-align: center">${error.messege}</td>
+                </tr>   
+            `
+                    document.getElementById('result').innerHTML = bucket;
+                });
+        };
+        getData();
+
+        const getDatapolies = async () => {
+            await axios.get(`http://localhost:3000/polies`)
+                .then((response) => {
+                    let bucket = ``;
+                    let polies = response.data;
+                    console.log(polies);
+                    if (polies.length > 0) {
+                        for (let i = 0; i < polies.length; i++) {
+                            bucket += `
+                                 <option>${polies[i].name}</option>
+                                `;
+                        }
+                    } else {
+                        bucket += `
+                                 <option>Data tidak ditemukan</option>
+                                `;
+                    }
+                    document.getElementById('polies').innerHTML = bucket;
+                })
+                .catch((error) => {
+                    let bucket = `
+                                 <option>${error.message}</option>
+                                `;
+                    document.getElementById('polies').innerHTML = bucket;
+                });
+        };
+
+        getDatapolies();
+
+    </script>
+</body>
+
+</html>
